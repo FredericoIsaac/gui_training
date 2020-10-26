@@ -1,6 +1,8 @@
 from tkinter import *
 from PIL import ImageTk, Image
 import sqlite3
+import csv
+from tkinter import ttk
 
 root = Tk()
 root.title("Client Relation Manager")
@@ -71,6 +73,101 @@ def add_customer():
     # Clear the fields
     clear_fields()
 
+# Write to csv excel function
+def write_to_csv(list_query):
+    """
+    Export to a csv called customers
+    """
+    with open("customers.csv", "a", newline="") as f:
+        w = csv.writer(f, dialect="excel")
+        for record in list_query:
+            w.writerow(record)
+
+
+# List customers
+def list_customers():
+    list_customers_query = Tk()
+    list_customers_query.title("List All Customers")
+    list_customers_query.geometry("800x600")
+
+    to_csv_file = [("first_name", "last_name", "address1", "address2", "city", "state", "zipcode", "country", "phone", "email", "payment_method", "discount_code", "price_paid")]
+    list_query = my_cursor.execute("SELECT * FROM customers")
+    for index, customer in enumerate(list_query):
+        num_column = 0
+        to_csv_file.append(customer)
+        for y in customer:
+            lookup_label = Label(list_customers_query, text=y)
+            lookup_label.grid(row=index, column=num_column)
+            num_column += 1 
+
+    # csv export
+    csv_button = Button(list_customers_query, text="Save to Excel", command=lambda: write_to_csv(to_csv_file))
+    csv_button.grid(row=index+1, column=0)
+
+
+# Search Customers
+def search_customers():
+    search_customers = Tk()
+    search_customers.title("Search Customers")
+    search_customers.geometry("1000x600")
+    def search_now():
+        selected = drop.get()
+        if selected == "Search by...":
+            test = Label(search_customers, text="Hey! You forgot to pick a search")
+            test.grid(row=2, column=0)
+        if selected == "Last Name":
+            sql = "SELECT * FROM customers WHERE last_name=?"
+
+        if selected == "Email Address":
+            sql = "SELECT * FROM customers WHERE email=?"
+
+        # if selected == "Customer Id":
+        #     sql = "SELECT * FROM customers WHERE user_id=?"
+        #     test = Label(search_customers, text="You picked Customer Id")
+        #     test.grid(row=3, column=0)
+        
+        searched = search_box.get()
+        # sql = "SELECT * FROM customers WHERE last_name=?"
+        name = (searched,)
+        result = my_cursor.execute(sql, name)
+        # Transform the query in to a list
+        result = my_cursor.fetchall()
+
+        if not result:
+            result = "Record Not Found..."
+            searched_label = Label(search_customers, text=result)
+            searched_label.grid(row=2, column=0, padx=10, columnspan=2)
+        else:
+            for index, customer in enumerate(result):
+                num_column = 0
+                index += 2
+                for y in customer:
+                    lookup_label = Label(search_customers, text=y)
+                    lookup_label.grid(row=index, column=num_column)
+                    num_column += 1 
+            
+            csv_button = Button(search_customers, text="Save to Excel", command=lambda: write_to_csv(result))
+            csv_button.grid(row=index+1, column=0)
+        
+        # searched_label = Label(search_customers, text=result)
+        # searched_label.grid(row=3, column=0, padx=10, columnspan=2)
+        
+
+    # Entry box search for customer
+    search_box = Entry(search_customers)
+    search_box.grid(row=0, column=1, padx=10, pady=10)
+    # Entry box label
+    search_box_label = Label(search_customers, text="Search Customer")
+    search_box_label.grid(row=0, column=0, padx=10, pady=10)
+    # Entry box search Button for Customer
+    search_button = Button(search_customers, text="Search Customers", command=search_now)
+    search_button.grid(row=1, column=0, padx=10)
+
+    # Drop Down Box
+    drop = ttk.Combobox(search_customers, value=["Search by...", "Last Name", "Email Address"]) #, "Customer Id"]
+    drop.current(0)
+    drop.grid(row=0, column=2)
+
 # Create a Label
 title_label = Label(root, text="Codemy Customers Database", font=("Helvetica", 16))
 title_label.grid(row=0, column=0, columnspan=2, pady="10")
@@ -137,9 +234,13 @@ add_customer_button.grid(row=14, column=0, padx=10, pady=10)
 clear_fields_button = Button(root, text="Clear Fields", command=clear_fields)
 clear_fields_button.grid(row=14, column=1)
 
+# List customers Button
+list_customers_button = Button(root, text="List Customer", command=list_customers)
+list_customers_button.grid(row=15, column=0, sticky=W, padx=10)
 
-
-
+# Search Customers
+search_customers_button = Button(root, text="Search", command=search_customers)
+search_customers_button.grid(row=15, column=1, sticky=W, padx=10)
 
 
 
