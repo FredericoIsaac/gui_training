@@ -14,8 +14,8 @@ my_db = sqlite3.connect("codemy.db")
 # Create a cursor and initialize it
 my_cursor = my_db.cursor()
 
-# # Drop table
-#my_cursor.execute("""DROP TABLE customers""")
+# #Drop table
+# my_cursor.execute("""DROP TABLE customers""")
 
 # Create a Table
 my_cursor.execute("""CREATE TABLE IF NOT EXISTS customers (
@@ -109,7 +109,112 @@ def list_customers():
 def search_customers():
     search_customers = Tk()
     search_customers.title("Search Customers")
-    search_customers.geometry("1000x600")
+    search_customers.geometry("1100x800")
+    
+    def update():
+        sql_command = """UPDATE customers SET first_name = ?, last_name = ?, zipcode = ?, price_paid = ?, email = ?, address_1 = ?, address_2 = ?, city = ?, state = ?, country = ?, phone = ?, payment_method = ?, discount_code = ? WHERE ROWID = ?"""
+        first_name = first_name_box2.get()
+        last_name = last_name_box2.get()
+        zipcode = zipcode_box2.get()
+        price_paid = price_paid_box2.get()
+        email = email_box2.get()
+        address_1 = address1_box2.get()
+        address_2 = address2_box2.get()
+        city = city_box2.get()
+        state = state_box2.get()
+        country = country_box2.get()
+        phone = phone_box2.get()
+        payment_method = payment_method_box2.get()
+        discount_code = discount_code_box2.get()
+        user_id = 1
+        inputs = (first_name, last_name, zipcode, price_paid, email, address_1, address_2, city, state, country, phone, payment_method, discount_code, user_id)
+
+        my_cursor.execute(sql_command, inputs)
+        my_db.commit()
+
+        search_customers.destroy()
+
+    def edit_now(id, index):
+
+        sql2 = "SELECT * FROM customers WHERE ROWID=?"   
+        searched = search_box.get()
+        name2 = (id,)
+        result2 = my_cursor.execute(sql2, name2)
+        result2 = my_cursor.fetchall()
+
+        index += 1
+        # Create main form to enter customer data
+        first_name_label = Label(search_customers, text="First Name").grid(row=index + 1, column=0, sticky=W, padx=10)
+        last_name_label = Label(search_customers, text="Last Name").grid(row=index + 2, column=0, sticky=W, padx=10)
+        address1_label = Label(search_customers, text="Address 1").grid(row=index + 3, column=0, sticky=W, padx=10)
+        address2_label = Label(search_customers, text="Address 2").grid(row=index + 4, column=0, sticky=W, padx=10)
+        city_label = Label(search_customers, text="City").grid(row=index + 5, column=0, sticky=W, padx=10)
+        state_label = Label(search_customers, text="State").grid(row=index + 6, column=0, sticky=W, padx=10)
+        zipcode_label = Label(search_customers, text="Zipcode").grid(row=index + 7, column=0, sticky=W, padx=10)
+        country_label = Label(search_customers, text="Country").grid(row=index + 8, column=0, sticky=W, padx=10)
+        phone_label = Label(search_customers, text="Phone Number").grid(row=index + 9, column=0, sticky=W, padx=10)
+        email_label = Label(search_customers, text="Email Address").grid(row=index + 10, column=0, sticky=W, padx=10)
+        payment_method_label = Label(search_customers, text="Payment Method").grid(row=index + 11, column=0, sticky=W, padx=10)
+        discount_code_label = Label(search_customers, text="Discount Code").grid(row=index + 12, column=0, sticky=W, padx=10)
+        price_paid_label = Label(search_customers, text="Price Paid").grid(row=index + 13, column=0, sticky=W, padx=10)
+
+        global first_name_box2
+        # Create Entry Boxes
+        first_name_box2 = Entry(search_customers)
+        first_name_box2.grid(row=index + 1, column=1, pady=10)
+        first_name_box2.insert(0, result2[0][0])
+        global last_name_box2
+        last_name_box2 = Entry(search_customers)
+        last_name_box2.grid(row=index + 2, column=1, pady=5)
+        last_name_box2.insert(0, result2[0][1])
+        global address1_box2
+        address1_box2 = Entry(search_customers)
+        address1_box2.grid(row=index + 3, column=1, pady=5)
+        address1_box2.insert(0, result2[0][2])
+        global address2_box2
+        address2_box2 = Entry(search_customers)
+        address2_box2.grid(row=index + 4, column=1, pady=5)
+        address2_box2.insert(0, result2[0][3])
+        global city_box2
+        city_box2 = Entry(search_customers)
+        city_box2.grid(row=index + 5, column=1, pady=5)
+        city_box2.insert(0, result2[0][4])
+        global state_box2
+        state_box2 = Entry(search_customers)
+        state_box2.grid(row=index + 6, column=1, pady=5)
+        state_box2.insert(0, result2[0][5])
+        global zipcode_box2
+        zipcode_box2 = Entry(search_customers)
+        zipcode_box2.grid(row=index + 7, column=1, pady=5)
+        zipcode_box2.insert(0, result2[0][6])
+        global country_box2
+        country_box2 = Entry(search_customers)
+        country_box2.grid(row=index + 8, column=1, pady=5)
+        country_box2.insert(0, result2[0][7])
+        global phone_box2
+        phone_box2 = Entry(search_customers)
+        phone_box2.grid(row=index + 9, column=1, pady=5)
+        phone_box2.insert(0, result2[0][8])
+        global email_box2
+        email_box2 = Entry(search_customers)
+        email_box2.grid(row=index + 10, column=1, pady=5)
+        email_box2.insert(0, result2[0][9])
+        global payment_method_box2
+        payment_method_box2 = Entry(search_customers)
+        payment_method_box2.grid(row=index + 11, column=1, pady=5)
+        payment_method_box2.insert(0, result2[0][10])
+        global discount_code_box2
+        discount_code_box2 = Entry(search_customers)
+        discount_code_box2.grid(row=index + 12, column=1, pady=5)
+        discount_code_box2.insert(0, result2[0][11])
+        global price_paid_box2
+        price_paid_box2 = Entry(search_customers)
+        price_paid_box2.grid(row=index + 13, column=1, pady=5)
+        price_paid_box2.insert(0, result2[0][12])
+        
+        save_record = Button(search_customers, text="Update Record", command=update)
+        save_record.grid(row=index+15, column=0, padx=10)
+    
     def search_now():
         selected = drop.get()
         if selected == "Search by...":
@@ -121,10 +226,8 @@ def search_customers():
         if selected == "Email Address":
             sql = "SELECT * FROM customers WHERE email=?"
 
-        # if selected == "Customer Id":
-        #     sql = "SELECT * FROM customers WHERE user_id=?"
-        #     test = Label(search_customers, text="You picked Customer Id")
-        #     test.grid(row=3, column=0)
+        if selected == "Customer ID":
+            sql = "SELECT * FROM customers WHERE ROWID=?"   
         
         searched = search_box.get()
         # sql = "SELECT * FROM customers WHERE last_name=?"
@@ -141,10 +244,14 @@ def search_customers():
             for index, customer in enumerate(result):
                 num_column = 0
                 index += 2
+                id_reference = 1
+                edit_button = Button(search_customers, text="Edit", command=lambda: edit_now(id_reference, index))
+                edit_button.grid(row=index, column=num_column)
                 for y in customer:
                     lookup_label = Label(search_customers, text=y)
-                    lookup_label.grid(row=index, column=num_column)
+                    lookup_label.grid(row=index, column=num_column+1)
                     num_column += 1 
+
             
             csv_button = Button(search_customers, text="Save to Excel", command=lambda: write_to_csv(result))
             csv_button.grid(row=index+1, column=0)
@@ -164,7 +271,7 @@ def search_customers():
     search_button.grid(row=1, column=0, padx=10)
 
     # Drop Down Box
-    drop = ttk.Combobox(search_customers, value=["Search by...", "Last Name", "Email Address"]) #, "Customer Id"]
+    drop = ttk.Combobox(search_customers, value=["Search by...", "Last Name", "Email Address", "Customer Id"])
     drop.current(0)
     drop.grid(row=0, column=2)
 
@@ -239,7 +346,7 @@ list_customers_button = Button(root, text="List Customer", command=list_customer
 list_customers_button.grid(row=15, column=0, sticky=W, padx=10)
 
 # Search Customers
-search_customers_button = Button(root, text="Search", command=search_customers)
+search_customers_button = Button(root, text="Search/Edit Customers", command=search_customers)
 search_customers_button.grid(row=15, column=1, sticky=W, padx=10)
 
 
