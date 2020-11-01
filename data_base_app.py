@@ -83,6 +83,7 @@ def query():
     query_label = Label(root, text=print_records)
     query_label.grid(row=12, column=0, columnspan=2)
 
+
     conn.commit()
     conn.close()
 
